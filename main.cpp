@@ -8,7 +8,7 @@ public:
 	virtual ~GuiComponent() = default;
 
 	virtual GuiComponent* clone() const = 0;
-	virtual void handleEvent(const SDL_Event& event) {}
+	virtual bool handleEvent(const SDL_Event& event) { return false; }
 	virtual void update() {}
 	virtual void render() {}
 
@@ -23,7 +23,7 @@ public:
 	DraggableRectangle(SDL_Renderer* renderer, const SDL_Rect& rect, const SDL_Color& color)
 		: mRenderer(renderer), mRect(rect), mColor(color) {}
 
-	void handleEvent(const SDL_Event& event) override 
+	bool handleEvent(const SDL_Event& event) override 
 	{
 		if (event.type == SDL_MOUSEBUTTONDOWN) 
 		{
@@ -36,6 +36,8 @@ public:
 				mDragging = true;
 				mDragOffsetX = x - mRect.x;
 				mDragOffsetY = y - mRect.y;
+
+				return true;
 			}
 		}
 		else if (event.type == SDL_MOUSEBUTTONUP) 
@@ -49,7 +51,11 @@ public:
 
 			mRect.x = x - mDragOffsetX;
 			mRect.y = y - mDragOffsetY;
+
+			return true;
 		}
+
+		return false;
 	}
 
 	void render() override 
@@ -85,16 +91,20 @@ public:
 
 	void handleEvent(const SDL_Event& event) 
 	{
-		for (auto& component : mComponents) 
+		for (auto it = mComponents.rbegin(); it != mComponents.rend(); ++it) 
 		{
-			component->handleEvent(event);
-			if (component->isDragging()) 
-			{
-				std::unique_ptr<GuiComponent> cloned = std::unique_ptr<GuiComponent>(component->clone());
-				mComponents.erase(std::remove(mComponents.begin(), mComponents.end(), component), mComponents.end());
-				mComponents.push_back(std::move(cloned));
-				break;
-			}
+			auto& component = *it;
+			if(component->handleEvent(event)) break;
+		}
+	}
+
+	void moveToTop(GuiComponent* component)
+	{
+		if (component->isDragging())
+		{
+			std::unique_ptr<GuiComponent> cloned = std::unique_ptr<GuiComponent>(component->clone());
+			mComponents.erase(std::remove(mComponents.begin(), mComponents.end(), component), mComponents.end());
+			mComponents.push_back(std::move(cloned));
 		}
 	}
 
@@ -169,6 +179,8 @@ int main(int argc, char* argv[])
 				controller.handleEvent(event); // Handle events with the GuiController
 			}
 		}
+
+		SDL_Delay(10);
 
 		controller.render(); // Render the GUI with the GuiController
 	}
