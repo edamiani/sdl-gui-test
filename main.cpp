@@ -18,17 +18,22 @@ int main(int argc, char* argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
 
-	SDL_Window* window = SDL_CreateWindow("Draggable Rectangles", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
+	SDL_Window* window = SDL_CreateWindow(
+		"Draggable Rectangles", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
-	GuiController controller(renderer); // Create a new GuiController object
+	// Create a new GuiController object
+	GuiController controller(renderer);
 
 	SDL_Rect initialRect = { 50, 50, 100, 100 };
 
 	// Add a few DraggableRectangle objects to the GuiController
-	controller.addComponent(std::make_unique<DraggableRectangle>(renderer, initialRect, getRandomColor()));
-	controller.addComponent(std::make_unique<DraggableRectangle>(renderer, SDL_Rect{ 200, 200, 100, 100 }, getRandomColor()));
-	controller.addComponent(std::make_unique<DraggableRectangle>(renderer, SDL_Rect{ 400, 50, 150, 150 }, getRandomColor()));
+	controller.addComponent(std::make_unique<DraggableRectangle>(
+		renderer, initialRect, getRandomColor()));
+	controller.addComponent(std::make_unique<DraggableRectangle>(
+		renderer, SDL_Rect{ 200, 200, 100, 100 }, getRandomColor()));
+	controller.addComponent(std::make_unique<DraggableRectangle>(
+		renderer, SDL_Rect{ 400, 50, 150, 150 }, getRandomColor()));
 
 	bool running = true;
 	while (running) 
@@ -46,17 +51,20 @@ int main(int argc, char* argv[])
 			}
 			else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_r && SDL_GetModState() & KMOD_CTRL) 
 			{
-				controller.addComponent(std::make_unique<DraggableRectangle>(renderer, SDL_Rect{ rand() % 500, rand() % 300, 100, 100 }, getRandomColor()));
+				controller.addComponent(std::make_unique<DraggableRectangle>(
+					renderer, SDL_Rect{ rand() % 500, rand() % 300, 100, 100 }, getRandomColor()));
 			}
 			else 
 			{
-				controller.handleEvent(event); // Handle events with the GuiController
+				// Handle events with the GuiController
+				controller.handleEvent(event);
 			}
 		}
 
 		SDL_Delay(10);
 
-		controller.render(); // Render the GUI with the GuiController
+		// Render the GUI with the GuiController
+		controller.render();
 	}
 
 	SDL_DestroyRenderer(renderer);

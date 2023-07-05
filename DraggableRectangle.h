@@ -6,7 +6,7 @@ class DraggableRectangle : public GuiComponent
 {
 public:
 	DraggableRectangle(SDL_Renderer* renderer, const SDL_Rect& rect, const SDL_Color& color)
-		: GuiComponent(rect), mRenderer(renderer), mColor(color) {}
+		: GuiComponent(rect), _renderer(renderer), _color(color) {}
 
 	bool handleEvent(const SDL_Event& event) override
 	{
@@ -18,24 +18,24 @@ public:
 			SDL_Point mousePoint = { x, y };
 			if (SDL_PointInRect(&mousePoint, &getRect()))
 			{
-				mDragging = true;
-				mDragOffsetX = x - getRect().x;
-				mDragOffsetY = y - getRect().y;
+				_dragging = true;
+				_dragOffsetX = x - getRect().x;
+				_dragOffsetY = y - getRect().y;
 
 				return true;
 			}
 		}
 		else if (event.type == SDL_MOUSEBUTTONUP)
 		{
-			mDragging = false;
+			_dragging = false;
 		}
-		else if (event.type == SDL_MOUSEMOTION && mDragging)
+		else if (event.type == SDL_MOUSEMOTION && _dragging)
 		{
 			int x, y;
 			SDL_GetMouseState(&x, &y);
 
-			getRect().x = x - mDragOffsetX;
-			getRect().y = y - mDragOffsetY;
+			getRect().x = x - _dragOffsetX;
+			getRect().y = y - _dragOffsetY;
 
 			return true;
 		}
@@ -45,13 +45,13 @@ public:
 
 	void render() override
 	{
-		SDL_SetRenderDrawColor(mRenderer, mColor.r, mColor.g, mColor.b, mColor.a);
-		SDL_RenderFillRect(mRenderer, &getRect());
+		SDL_SetRenderDrawColor(_renderer, _color.r, _color.g, _color.b, _color.a);
+		SDL_RenderFillRect(_renderer, &getRect());
 	}
 
 	bool isDragging() const override
 	{
-		return mDragging;
+		return _dragging;
 	}
 
 	DraggableRectangle* clone() const override
@@ -60,9 +60,9 @@ public:
 	}
 
 private:
-	SDL_Renderer* mRenderer;
-	SDL_Color mColor;
-	bool mDragging = false;
-	int mDragOffsetX = 0;
-	int mDragOffsetY = 0;
+	SDL_Renderer* _renderer;
+	SDL_Color _color;
+	bool _dragging = false;
+	int _dragOffsetX = 0;
+	int _dragOffsetY = 0;
 };

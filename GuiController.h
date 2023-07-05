@@ -9,14 +9,14 @@
 class GuiController
 {
 public:
-	GuiController(SDL_Renderer* renderer) : mRenderer(renderer) {}
+	GuiController(SDL_Renderer* renderer) : _renderer(renderer) {}
 
 	void handleEvent(const SDL_Event& event);
 	void render();
 	void addComponent(std::unique_ptr<GuiComponent> component);
 
 private:
-	SDL_Renderer* mRenderer;
-	std::vector<std::unique_ptr<GuiComponent>> mComponents;
-	int mThreshold{ 20 };
+	SDL_Renderer* _renderer;
+	std::vector<std::unique_ptr<GuiComponent>> _components;
+	int _threshold{ 20 };
 };

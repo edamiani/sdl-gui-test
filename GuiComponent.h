@@ -6,7 +6,7 @@ class GuiComponent
 {
 public:
 	virtual ~GuiComponent() = default;
-	GuiComponent(const SDL_Rect& rect) : mRect(rect) {}
+	GuiComponent(const SDL_Rect& rect) : _rect(rect) {}
 
 	virtual GuiComponent* clone() const = 0;
 	virtual bool handleEvent(const SDL_Event& event) { return false; }
@@ -15,11 +15,11 @@ public:
 
 	virtual bool containsPoint(int x, int y) const { return false; }
 
-	SDL_Rect& getRect() { return mRect; }
-	void setRect(const SDL_Rect& rect) { mRect = rect; }
+	SDL_Rect& getRect() { return _rect; }
+	void setRect(const SDL_Rect& rect) { _rect = rect; }
 
 	virtual bool isDragging() const { return false; }
 
 private:
-	SDL_Rect mRect;
+	SDL_Rect _rect;
 };
